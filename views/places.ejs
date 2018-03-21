@@ -1,0 +1,7 @@
+<h1>This is the places page</h1>
+<% places.forEach(function(place){ %>
+  <div>
+    <h3><%= place.name %></h3>
+    <img src="<%= place.img %>" alt="<%= place.name %>"
+  </div>
+<% }); %>
