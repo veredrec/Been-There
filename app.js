@@ -1,22 +1,14 @@
 var express = require('express'),
   app = express(),
   bodyParser = require('body-parser'),
-  mongoose = require('mongoose');
+  mongoose = require('mongoose'),
+  Place = require('./models/place');
 
 mongoose.connect('mongodb://localhost/been_there');
 
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// SCHEMA
-var placeSchema = new mongoose.Schema({
-  name: String,
-  img: String,
-  desc: String
-});
-
-var Place = mongoose.model('Place', placeSchema);
 
 //   {
 //     name: 'Arches',
