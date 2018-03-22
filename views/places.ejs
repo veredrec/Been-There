@@ -1,7 +1,29 @@
-<h1>This is the places page</h1>
-<% places.forEach(function(place){ %>
-  <div>
-    <h3><%= place.name %></h3>
-    <img src="<%= place.img %>" alt="<%= place.name %>"
+<% include partials/header %>
+
+<div class="container">
+
+  <header class="jumbotron">
+    <div class="container">
+      <h1>Been There</h1>
+      <p>The place where you can see and add your favorite places in the world</p>
+      <p>
+        <a class="btn btn-primary btn-lrg" href="/places/new">Add your favorite place</a>
+      </p>
+    </div>
+  </header>
+
+  <div class="row" style="display: flex; flex-wrap: wrap">
+    <% places.forEach(function(place){ %>
+      <div class="col-md-3 col-sm-6">
+        <div class="thumbnail">
+          <img src="<%= place.img %>" alt="<%= place.name %>">
+          <div class="caption">
+            <h4><%= place.name %></h4>
+          </div>
+        </div>
+      </div>
+    <% }); %>
   </div>
-<% }); %>
+</div>
+
+<% include partials/footer %>
