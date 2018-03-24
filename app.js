@@ -2,48 +2,15 @@ var express = require('express'),
   app = express(),
   bodyParser = require('body-parser'),
   mongoose = require('mongoose'),
-  Place = require('./models/place');
+  Place = require('./models/place'),
+  seedDB = require('./seeds');
 
+seedDB();
 mongoose.connect('mongodb://localhost/been_there');
 
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
-
-//   {
-//     name: 'Arches',
-//    img:'https://utahcdn.azureedge.net/media/2158/arches-delicate-arch-slide.jpg?anchor=center&mode=crop&width=875&height=583&rnd=131423660350000000',
-// description: 'Amazing hikings and wonderful place';
-//   },
-// {
-// name: 'Zion',
-// img: 'https://media.mnn.com/assets/images/2016/05/zion-national-park.jpg'
-// },
-// {
-//   name: 'Grand Canyon',
-//   img: 'https://www.canyontours.com/wp-content/uploads/2013/09/West-Rim.jpg'
-// },
-// {
-//   name: 'Half Dome',
-//   img: 'https://www.rei.com/adventures/assets/adventures/images/trip/core/northamerica/yhd_hero'
-// }
-
-// Place.create(
-//   {
-//     name: 'Arches',
-//     img:
-//       'https://utahcdn.azureedge.net/media/2158/arches-delicate-arch-slide.jpg?anchor=center&mode=crop&width=875&height=583&rnd=131423660350000000',
-//     description: 'Amazing hikings and wonderful place'
-//   },
-//   function(err, place) {
-//     if (err) {
-//       console.log('ERROR ', err);
-//     } else {
-//       console.log('NEWLY CREATED PLACE');
-//       console.log(place);
-//     }
-//   }
-// );
 
 app.get('/', function(req, res) {
   res.render('home');
@@ -81,13 +48,15 @@ app.get('/places/new', function(req, res) {
 });
 
 app.get('/places/:id', function(req, res) {
-  Place.findById(req.params.id, function(err, foundPlace) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render('show', { place: foundPlace });
-    }
-  });
+  Place.findById(req.params.id)
+    .populate('comments')
+    .exec(function(err, foundPlace) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render('show', { place: foundPlace });
+      }
+    });
 });
 
 app.listen(4000, function() {
