@@ -1,0 +1,42 @@
+<% include ../partials/header %>
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+      <p class="title">Been There</p>
+      <div class="list-group">
+        <li class="list-group-item active">Info 1</li>
+        <li class="list-group-item">Info 1</li>
+        <li class="list-group-item">Info 1</li>
+      </div> <!-- closes list-group -->
+    </div> <!-- closes col-md-3 -->
+    <div class="col-md-9">
+      <div class="thumbnail">
+        <img class="img-responsive" src="<%= place.img %>" alt="<%= place.name %>">
+        <div class="caption-full">
+          <h4 class="pull-right">$9/visit</h4>
+          <h4><a href=""><%= place.name %></a></h4>
+          <p><%= place.desc %></p>
+        </div> <!-- closes caption-full -->
+      </div> <!-- closes thumbnail -->
+      <div class="well">
+        <div class="text-right">
+          <a class="btn btn-success" href="/places/<%= place._id %>/comments/new">Add New Comment</a>
+        </div> <!-- closes text-right -->
+        <hr>
+        <% place.comments.forEach(function(comment){ %>
+          <div class="row">
+            <div class="col-md-12">
+              <strong><%= comment.author %></strong>
+              <span class="pull-right">10 days ago</span>
+              <p>
+                <%= comment.text %>
+              </p>
+            </div>
+          </div>
+        <% }) %>
+      </div> <!-- closes well -->
+    </div> <!-- closes col-md-9 -->
+  </div> <!-- closes row -->
+</div> <!-- closes container -->
+
+<% include ../partials/footer %>
