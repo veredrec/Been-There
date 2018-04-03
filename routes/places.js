@@ -44,11 +44,54 @@ router.get('/:id', function(req, res) {
     .populate('comments')
     .exec(function(err, foundPlace) {
       if (err) {
-        console.log('Error ', err);
+        console.log('Error in show place ', err);
+        console.log(req.params.id);
+        res.redirect('/places');
       } else {
         res.render('places/show', { place: foundPlace });
       }
     });
+});
+
+// Edit place
+router.get('/:id/edit', function(req, res) {
+  Place.findById(req.params.id, function(err, foundPlace) {
+    if (err) {
+      console.log('Error with edit route ', err);
+      res.redirect('/places');
+    } else {
+      res.render('places/edit', { place: foundPlace });
+    }
+  });
+});
+
+// Update place after editing
+router.put('/:id', function(req, res) {
+  // find and update the place
+  Place.findByIdAndUpdate(req.params.id, req.body.place, function(
+    err,
+    updatedPlace
+  ) {
+    if (err) {
+      console.log('Error with find and update ', err);
+      res.redirect('/places');
+    } else {
+      // redirect to the show page to see changes
+      res.redirect('/places/' + req.params.id);
+    }
+  });
+});
+
+// Delete place
+router.delete('/:id', function(req, res) {
+  Place.findByIdAndRemove(req.params.id, function(err) {
+    if (err) {
+      console.log('Error in delete ', err);
+      res.redirect('/places');
+    } else {
+      res.redirect('places');
+    }
+  });
 });
 
 // middleware to check if user is logged in
