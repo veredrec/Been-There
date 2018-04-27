@@ -54,19 +54,14 @@ router.get('/:id', function(req, res) {
 });
 
 // Edit place
-router.get('/:id/edit', function(req, res) {
+router.get('/:id/edit', checkPlaceOwnership, function(req, res) {
   Place.findById(req.params.id, function(err, foundPlace) {
-    if (err) {
-      console.log('Error with edit route ', err);
-      res.redirect('/places');
-    } else {
-      res.render('places/edit', { place: foundPlace });
-    }
+    res.render('places/edit', { place: foundPlace });
   });
 });
 
 // Update place after editing
-router.put('/:id', function(req, res) {
+router.put('/:id', checkPlaceOwnership, function(req, res) {
   // find and update the place
   Place.findByIdAndUpdate(req.params.id, req.body.place, function(
     err,
@@ -83,7 +78,7 @@ router.put('/:id', function(req, res) {
 });
 
 // Delete place
-router.delete('/:id', function(req, res) {
+router.delete('/:id', checkPlaceOwnership, function(req, res) {
   Place.findByIdAndRemove(req.params.id, function(err) {
     if (err) {
       console.log('Error in delete ', err);
@@ -100,6 +95,27 @@ function isLoggedIn(req, res, next) {
     return next();
   }
   res.redirect('/login');
+}
+
+// middleware to check if a user owns the place post
+function checkPlaceOwnership(req, res, next) {
+  if (req.isAuthenticated()) {
+    Place.findById(req.params.id, function(err, foundPlace) {
+      if (err) {
+        console.log('Error with edit route ', err);
+        res.redirect('back');
+      } else {
+        // does user own the post
+        if (foundPlace.author.id.equals(req.user._id)) {
+          next();
+        } else {
+          res.redirect('back');
+        }
+      }
+    });
+  } else {
+    res.redirect('back');
+  }
 }
 
 module.exports = router;
