@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Place = require('../models/place');
+var middleware = require('../middleware'); // automaticly will look for index.js in the directory, so no need to specify
 
 router.get('/', function(req, res) {
   //Get all places from database
@@ -15,7 +16,7 @@ router.get('/', function(req, res) {
 });
 
 // Create - add a new place
-router.post('/', isLoggedIn, function(req, res) {
+router.post('/', middleware.isLoggedIn, function(req, res) {
   var name = req.body.name;
   var image = req.body.image;
   var description = req.body.description;
@@ -34,7 +35,7 @@ router.post('/', isLoggedIn, function(req, res) {
   });
 });
 
-router.get('/new', isLoggedIn, function(req, res) {
+router.get('/new', middleware.isLoggedIn, function(req, res) {
   res.render('places/new');
 });
 
@@ -54,14 +55,14 @@ router.get('/:id', function(req, res) {
 });
 
 // Edit place
-router.get('/:id/edit', checkPlaceOwnership, function(req, res) {
+router.get('/:id/edit', middleware.checkPlaceOwnership, function(req, res) {
   Place.findById(req.params.id, function(err, foundPlace) {
     res.render('places/edit', { place: foundPlace });
   });
 });
 
 // Update place after editing
-router.put('/:id', checkPlaceOwnership, function(req, res) {
+router.put('/:id', middleware.checkPlaceOwnership, function(req, res) {
   // find and update the place
   Place.findByIdAndUpdate(req.params.id, req.body.place, function(
     err,
@@ -78,7 +79,7 @@ router.put('/:id', checkPlaceOwnership, function(req, res) {
 });
 
 // Delete place
-router.delete('/:id', checkPlaceOwnership, function(req, res) {
+router.delete('/:id', middleware.checkPlaceOwnership, function(req, res) {
   Place.findByIdAndRemove(req.params.id, function(err) {
     if (err) {
       console.log('Error in delete ', err);
@@ -88,34 +89,5 @@ router.delete('/:id', checkPlaceOwnership, function(req, res) {
     }
   });
 });
-
-// middleware to check if user is logged in
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
-}
-
-// middleware to check if a user owns the place post
-function checkPlaceOwnership(req, res, next) {
-  if (req.isAuthenticated()) {
-    Place.findById(req.params.id, function(err, foundPlace) {
-      if (err) {
-        console.log('Error with edit route ', err);
-        res.redirect('back');
-      } else {
-        // does user own the post
-        if (foundPlace.author.id.equals(req.user._id)) {
-          next();
-        } else {
-          res.redirect('back');
-        }
-      }
-    });
-  } else {
-    res.redirect('back');
-  }
-}
 
 module.exports = router;
