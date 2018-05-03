@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 // SCHEMA
 var placeSchema = new mongoose.Schema({
   name: String,
+  price: String,
   img: String,
   desc: String,
   author: {

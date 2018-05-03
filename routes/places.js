@@ -18,13 +18,20 @@ router.get('/', function(req, res) {
 // Create - add a new place
 router.post('/', middleware.isLoggedIn, function(req, res) {
   var name = req.body.name;
+  var price = req.body.price;
   var image = req.body.image;
   var description = req.body.description;
   var author = {
     id: req.user._id,
     username: req.user.username
   };
-  var newPlace = { name: name, img: image, desc: description, author: author };
+  var newPlace = {
+    name: name,
+    price: price,
+    img: image,
+    desc: description,
+    author: author
+  };
   // Create a new place in DB
   Place.create(newPlace, function(err, newlyCreated) {
     if (err) {
